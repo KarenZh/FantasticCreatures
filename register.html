@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <!-- Site Properties -->
+  <title>Login Example - Semantic</title>
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/reset.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/site.css">
+
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/container.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/grid.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/header.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/image.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/menu.css">
+
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/divider.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/segment.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/form.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/input.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/button.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/list.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/message.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/icon.css">
+  <link rel="stylesheet" type="text/css" href="semantic/dist/components/transition.css">
+
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="semantic/dist/components/form.js"></script>
+  <script src="semantic/dist/components/transition.js"></script>
+  <script src="./functions.js"></script>
+
+  <style type="text/css">
+    body {
+      background-color: #DADADA;
+    }
+    body > .grid {
+      height: 100%;
+    }
+    .image {
+      margin-top: -100px;
+    }
+    .column {
+      max-width: 450px;
+    }
+
+    #imagebackground {
+      background-image: url('https://media.timeout.com/images/103741309/image.jpg') !important;
+      background-size: cover !important;
+    }
+  </style>
+  <script>
+  function getFieldValue(fieldId) { 
+    // 'get field' is part of Semantics form behavior API
+    return $('.ui.form').form('get field', fieldId).val();
+  }
+
+  function submitForm() {
+    console.log("submit request")
+    var button = $('#submit-button')
+    button.addClass('loading')
+
+    var email = getFieldValue("email")
+    var name = getFieldValue("name")
+    var password = getFieldValue("password")
+
+    $.post("http://52.243.86.154/register",
+      {
+        loginName: name,
+        loginPassword: password,
+        contactEmail: email
+      },
+      function (data, status) {
+        console.log(data)
+        button.removeClass("loading")
+        $(".to-hide").transition('fade up out')
+        if (data.result == "OK") {
+          $("#register-success").transition('fade up in')
+        } else {
+          $("#register-failure-text").text = data.result
+          $("#register-failure").transition('fade up in')
+        }
+      }
+    )
+    return false
+  }
+
+  var register_validation = {
+            email: {
+              identifier  : 'email',
+              rules: [
+                {
+                  type   : 'empty',
+                  prompt : 'Please enter your e-mail'
+                },
+                {
+                  type   : 'email',
+                  prompt : 'Please enter a valid e-mail'
+                }
+              ]
+            },
+            name: {
+                identifier: "name",
+                rules: [
+                    {
+                        type: "empty",
+                        prompt: "Please enter your name"
+                    }
+                ]
+            },
+            password: {
+              identifier  : 'password',
+              rules: [
+                {
+                  type   : 'empty',
+                  prompt : 'Please enter your password'
+                },
+                {
+                  type   : 'length[6]',
+                  prompt : 'Your password must be at least 6 characters'
+                }
+              ]
+            },
+            confirm_password: {
+                identifier: "confirm-password",
+                rules: [
+                    {
+                        type: "match[password]",
+                        prompt: "Your password confirmation does not match"
+                    }
+                ]
+            },
+            check_unique_code: {
+                identifier: "unique-code",
+                rules: [
+                    {
+                        type: "empty",
+                        prompt: "Please enter your unique code"
+                    }
+                ]
+            }
+          }
+
+  $(document)
+    .ready(function() {
+      $('.ui.form')
+        .form({
+          fields: register_validation,
+          onSuccess: submitForm
+        })
+    })
+  ;
+  </script>
+</head>
+<body>
+
+<div class="ui large top fixed hidden menu">
+  <div class="ui container">
+    <a href="index.html" class="item">Home</a>
+  </div>
+</div>
+
+<div class="ui middle aligned center aligned grid" id="imagebackground">
+  <div class="column">
+    <h2 class="ui inverted image header">
+      <!--<img src="assets/images/logo.png" class="image">-->
+      <div class="content">
+        Register as a producer
+        <p style="font-size:60%;">Use your unique login code to create your own page and start using SourceLink!
+          </p>
+      </div>
+    </h2>
+    <form class="ui large form to-hide">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="name" placeholder="Name">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="confirm-password" placeholder="Confirm Password">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="privacy icon"></i>
+            <input type="text" name="unique-code" placeholder="Unique Code">
+          </div>
+        </div>
+        <!--<button class="ui button" type="submit">Submit</button>-->
+        <div class="ui fluid large teal submit button" id="submit-button">Register</div>
+      </div>
+
+      <div class="ui error message"></div>
+
+    </form>
+
+    <div class="ui message to-hide">
+      Already signed up? <a href="login.html">Log in</a>
+    </div>
+
+    <div class="ui stacked segment transition hidden" id="register-success">
+      <div class="ui header">
+        Thank you for joining us!
+      </div>
+      <a class="ui button primary" href="additem.html">Add an item</a>
+    </div>
+
+    <div class="ui stacked segment transition hidden" id="register-failure">
+      <div class="ui header" id="register-failure-text">
+        Registration failed
+      </div>
+      <a class="ui button" href="additem.html">Try again</a>
+    </div>
+      
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>
